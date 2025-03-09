@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html><head><title>Mock OIDC Consent</title></head>
+<body>
+  <h1>Consent</h1>
+  <p>Client: <%= clientId %></p>
+  <p>Scope: <%= scope %></p>
+  <form method="POST" action="/authorize">
+    <input type="hidden" name="client_id" value="<%= clientId %>" />
+    <input type="hidden" name="redirect_uri" value="<%= redirectUri %>" />
+    <input type="hidden" name="response_type" value="<%= responseType %>" />
+    <input type="hidden" name="scope" value="<%= scope %>" />
+    <input type="hidden" name="state" value="<%= state %>" />
+    <input type="hidden" name="nonce" value="<%= nonce %>" />
+    <input type="hidden" name="userId" value="<%= userId %>" />
+    <button type="submit" name="action" value="allow">Allow</button>
+    <button type="submit" name="action" value="deny">Deny</button>
+  </form>
+</body></html>

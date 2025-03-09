@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html><head><title>Mock OIDC Login</title></head>
+<body>
+  <h1>Login</h1>
+  <% if (error) { %><p style="color:red"><%= error %></p><% } %>
+  <form method="POST" action="/login">
+    <input type="hidden" name="continue" value="<%= continueUrl %>"/>
+    <p>Email: <input type="text" name="email"/></p>
+    <p>Password: <input type="password" name="password"/></p>
+    <p><button type="submit">Sign In</button></p>
+  </form>
+</body></html>
