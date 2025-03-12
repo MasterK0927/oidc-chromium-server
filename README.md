@@ -1,0 +1,1 @@
+npx nodemon --exec "ts-node --compiler-options '{\"module\":\"commonjs\"}'" mock-server.ts
