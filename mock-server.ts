@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { generateKeyPairSync, KeyObject } from 'crypto';
 import crypto from 'crypto';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { userInfo } from 'os';
 
 /***************************************************************************
  * 1. Generate ephemeral RSA key pair (RS256)
@@ -62,13 +63,13 @@ interface RefreshToken {
 
 const memory = {
   users: [
-    { id: 1, email: 'alice@example.com', password: 'password', name: 'Alice Doe' }
+    { id: 1, email: 'alice@ping-browser.com', password: 'password', name: 'Alice Doe' }
   ] as User[],
 
   clients: [
     {
-      clientId: "77185425430.apps.googleusercontent.com",
-      clientSecret: 'test-secret',
+      clientId: "385787851048-fk8u1939hdo5gtb0r0vji84rm5sb445b.apps.googleusercontent.com",
+      clientSecret: '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',
       redirectUris: ['https://your-chromium-callback-url/callback']
     }
   ] as Client[],
@@ -103,20 +104,27 @@ app.use((req, res, next) => {
  ***************************************************************************/
 app.post('/ListAccounts', (req, res) => {
   // Simulate Google's ListAccounts response
-  const response = {
-    accounts: memory.users.map(user => ({
-      id: user.id,
-      email: user.email,
-      isSignedIn: true,
-      isPrimary: true,
-      isDefault: true,
-      isManaged: false,
-      isChild: false,
-      isUnderAdvancedProtection: false,
-      pictureUrl: 'https://example.com/profile.jpg'
-    })),
-    primaryAccountId: memory.users[0].id
-  };
+  const response = [
+    "gaia.l.a.r",
+      [[
+        "gaia.l.a",
+        1,
+        "Alice Doe",
+        "alice@ping-browser.com",
+        "https://lh3.googleusercontent.com/-KNevF2DRYYY/AAAAAAAAAAI/AAAAAAAAAAA/YArM3rIuhXM/s48-c/photo.jpg",
+        1,
+        1,
+        0,
+        null,
+        1,
+        "1",
+        null,
+        null,
+        null,
+        null,
+        1,
+      ]]
+    ];
 
   // Set headers to match Google's response
   res.set('Content-Type', 'application/json; charset=utf-8');
@@ -141,13 +149,12 @@ app.post('/ListAccounts', (req, res) => {
 
 app.get('/oauth2/v1/userinfo', (req, res) => {
   const userInfo = {
-    id: "1234567890",
-    email: "alice@example.com",
+    id: "165",
+    email: "alice@ping-browser.com",
     verified_email: true,
     name: "Alice Doe",
     given_name: "Alice",
-    family_name: "Doe",
-    picture: "https://example.com/profile.jpg",
+    picture: "https://lh3.googleusercontent.com/-KNevF2DRYYY/AAAAAAAAAAI/AAAAAAAAAAA/YArM3rIuhXM/s48-c/photo.jpg",
     locale: "en"
   };
 
@@ -168,18 +175,18 @@ app.get('/oauth2/v1/userinfo', (req, res) => {
  ***************************************************************************/
 app.get('/login', (req, res) => {
   res.send(`
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html>
-      <head>
+<head>
         <title>Login</title>
-        <style>
+  <style>
           body { font-family: Arial, sans-serif; margin: 40px; }
           form { max-width: 300px; margin: auto; }
           label, input { display: block; width: 100%; margin-bottom: 10px; }
           input[type="submit"] { margin-top: 20px; }
-        </style>
-      </head>
-      <body>
+  </style>
+</head>
+<body>
         <h1>Login</h1>
         <form method="post" action="/login">
           <label for="email">Email:</label>
@@ -188,9 +195,13 @@ app.get('/login', (req, res) => {
           <input type="password" id="password" name="password" required />
           <input type="hidden" name="nonce" value="sample-nonce" />
           <input type="submit" value="Login" />
-        </form>
-      </body>
-    </html>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
   `);
 });
 
@@ -213,7 +224,7 @@ app.post('/login', (req, res) => {
   memory.authorizationCodes.set(code, {
     code,
     userId: user.id,
-    clientId: '77185425430.apps.googleusercontent.com,',
+    clientId: '385787851048-fk8u1939hdo5gtb0r0vji84rm5sb445b.apps.googleusercontent.com,',
     redirectUri: '',
     scope: 'openid email profile',
     nonce: nonce,
@@ -246,7 +257,7 @@ app.post('/token', (req, res) => {
     // Create access token.
     const accessToken = jwt.sign({
       sub: "1",
-      email: "alice@example.com",
+      email: "alice@ping-browser.com",
       aud: client_id,
       iss: 'https://your-domain.com',
       iat: now,
@@ -256,14 +267,19 @@ app.post('/token', (req, res) => {
     // Create ID token formatted for Chrome.
     const idToken = jwt.sign({
       iss: 'https://your-domain.com',
-      sub: "1",
-      aud: client_id,
       azp: client_id,
+      aud: client_id,
+      sub: "1",
+      email: "alice@ping-browser.com",
+      email_verified: true,
+      at_hash: "LtHKc9OZu8fUnQotk0-Heg",
+      name: "Alice Doe",
+      picture: "https://lh3.googleusercontent.com/a/ACg8ocKH6c-If9232bowTMCZvZp8CQ_wJYhUrdG5O0T0fZ7egeuTtq37Bw=s96-c",
+      given_name: "Alice",
+      family_name: "Doe",
+      services: [],
       iat: now,
       exp: now + expiresIn,
-      email: "alice@example.com",
-      email_verified: true,
-      name: "Alice Doe"
     }, privateKey, { algorithm: 'RS256' });
     
     // Generate refresh token.
