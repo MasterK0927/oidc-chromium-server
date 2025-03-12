@@ -143,13 +143,15 @@ app.post('/ListAccounts', (req, res) => {
   res.set('Server', 'ESF');
   res.set('X-XSS-Protection', '0');
 
+  console.log('ListAccounts Response:', response);
+
   // Send the response
   res.status(200).json(response);
 });
 
 app.get('/oauth2/v1/userinfo', (req, res) => {
   const userInfo = {
-    id: "165",
+    id: "1",
     email: "alice@ping-browser.com",
     verified_email: true,
     name: "Alice Doe",
@@ -165,6 +167,8 @@ app.get('/oauth2/v1/userinfo', (req, res) => {
     'Content-Type': 'application/json; charset=UTF-8',
     'Vary': 'Origin, X-Origin, Referer'
   });
+
+  console.log('User Info:', userInfo);
   
   res.status(200).json(userInfo);
 });
@@ -291,6 +295,11 @@ app.post('/token', (req, res) => {
     });
 
     const scopes = req.body.scope;
+
+    console.log('Access Token:', accessToken);
+    console.log('ID Token:', idToken);
+    console.log('Refresh Token:', refreshToken);
+    console.log('Scopes:', scopes);
 
     res.json({
       access_token: accessToken,
