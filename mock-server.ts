@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import { generateKeyPairSync, KeyObject } from 'crypto';
 import crypto from 'crypto';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { userInfo } from 'os';
 
 /***************************************************************************
  * 1. Generate ephemeral RSA key pair (RS256)
@@ -63,7 +62,7 @@ interface RefreshToken {
 
 const memory = {
   users: [
-    { id: 1, email: 'alice@ping-browser.com', password: 'password', name: 'Alice Doe' }
+    { id: 4, email: 'alice@wxyz.com', password: 'password', name: 'Alice Doe' }
   ] as User[],
 
   clients: [
@@ -110,14 +109,14 @@ app.post('/ListAccounts', (req, res) => {
         "gaia.l.a",
         1,
         "Alice Doe",
-        "alice@ping-browser.com",
-        "https://lh3.googleusercontent.com/-KNevF2DRYYY/AAAAAAAAAAI/AAAAAAAAAAA/YArM3rIuhXM/s48-c/photo.jpg",
+        "alice@wxyz.com",
+        "https://lh3.googleusercontent.com/a/ACg8ocKH6c-If9232bowTMCZvZp8CQ_wJYhUrdG5O0T0fZ7egeuTtq37Bw=s96-c",
         1,
         1,
         0,
         null,
         1,
-        "1",
+        "4",
         null,
         null,
         null,
@@ -151,12 +150,12 @@ app.post('/ListAccounts', (req, res) => {
 
 app.get('/oauth2/v1/userinfo', (req, res) => {
   const userInfo = {
-    id: "1",
-    email: "alice@ping-browser.com",
+    id: "4",
+    email: "alice@wxyz.com",
     verified_email: true,
     name: "Alice Doe",
     given_name: "Alice",
-    picture: "https://lh3.googleusercontent.com/-KNevF2DRYYY/AAAAAAAAAAI/AAAAAAAAAAA/YArM3rIuhXM/s48-c/photo.jpg",
+    picture: "https://lh3.googleusercontent.com/a/ACg8ocKH6c-If9232bowTMCZvZp8CQ_wJYhUrdG5O0T0fZ7egeuTtq37Bw=s96-c",
     locale: "en"
   };
 
@@ -260,8 +259,8 @@ app.post('/token', (req, res) => {
     
     // Create access token.
     const accessToken = jwt.sign({
-      sub: "1",
-      email: "alice@ping-browser.com",
+      sub: "4",
+      email: "alice@wxyz.com",
       aud: client_id,
       iss: 'https://your-domain.com',
       iat: now,
@@ -273,8 +272,8 @@ app.post('/token', (req, res) => {
       iss: 'https://your-domain.com',
       azp: client_id,
       aud: client_id,
-      sub: "1",
-      email: "alice@ping-browser.com",
+      sub: "4",
+      email: "alice@wxyz.com",
       email_verified: true,
       at_hash: "LtHKc9OZu8fUnQotk0-Heg",
       name: "Alice Doe",
@@ -290,7 +289,7 @@ app.post('/token', (req, res) => {
     const refreshToken = crypto.randomBytes(32).toString('hex');
     memory.refreshTokens.set(refreshToken, {
       token: refreshToken,
-      userId: 1,
+      userId: 4,
       expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000
     });
 
@@ -346,6 +345,6 @@ app.post('/v1/accountcapabilities:batchGet', (req, res) => {
 /***************************************************************************
  * 8. Start Server
  ***************************************************************************/
-app.listen(5000, () => {
+app.listen(6000, () => {
   console.log('OIDC server running at http://localhost:5000');
 });
